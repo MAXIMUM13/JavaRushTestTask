@@ -1,0 +1,99 @@
+.nav-link {
+    color: black !important;
+}
+
+.note {
+    float: right;
+    background-color: yellow;
+    color: blue;
+    border: 1px solid red;
+    margin-bottom: 3px;
+}
+
+.category {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.sortby {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.sortorder {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.count {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+#add-todo {
+    float: left;
+    margin-right: 10px;
+    margin-top: 25px;
+    font-size: 20px;
+    background-color: yellow;
+}
+
+#delete-todos {
+    float: left;
+    margin-top: 25px;
+    font-size: 20px;
+    background-color: yellow;
+}
+
+.new-todo-input {
+    width: 300px;
+}
+
+.label {
+    float: right;
+}
+
+.add-todo-button {
+    margin-left: 10px;
+    margin-top: -10px;
+}
+
+.cancel-add-todo-button {
+    margin-left: 10px;
+    margin-top: -10px;
+}
+
+.input-field {
+    width: 300px;
+}
+
+.save-button {
+    margin-left: 10px;
+}
+
+.cancel-button {
+    margin-left: 10px;
+}
+
+.delete-button {
+    margin-right: 20px;
+    float: right;
+}
+
+.selected {
+    background-color: yellow;
+}
+
+.selected:hover {
+    background-color: lightblue !important;
+}
+
+#cancel-selection {
+    float: start;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
