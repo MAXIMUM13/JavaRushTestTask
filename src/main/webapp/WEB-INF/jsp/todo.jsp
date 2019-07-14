@@ -27,9 +27,9 @@
                     <div class="category">
                         <label for="categories">Category:</label><br>
                         <select id="categories" class="selectpicker">
-                            <option value="All">All</option>
-                            <option value="Done">Done</option>
-                            <option value="Not done">Not done</option>
+                            <option value="all">All</option>
+                            <option value="done">Done</option>
+                            <option value="not_done">Not done</option>
                         </select>
                     </div>
 

@@ -1,22 +1,32 @@
 package ru.maximum13.jrtest.controller;
 
 import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.maximum13.jrtest.model.*;
-import ru.maximum13.jrtest.service.*;
+
+import ru.maximum13.jax.core.obj.JInt;
+import ru.maximum13.jax.core.util.NumberUtils;
+import ru.maximum13.jrtest.model.Category;
+import ru.maximum13.jrtest.model.Todo;
+import ru.maximum13.jrtest.service.SortOrder;
+import ru.maximum13.jrtest.service.TodoService;
 
 /**
  *
  * @author MAXIMUM13
  */
-@Controller("todoMapping")
+@Controller("todo_controller")
 @RequestMapping("/todo")
 public class TodoController {
 
+    private final TodoService todoService;
+
     @Autowired
-    private TodoService todoService;
+    public TodoController(TodoService todoService) {
+        this.todoService = todoService;
+    }
 
     @RequestMapping("/")
     public String loadMainPage() {
@@ -26,16 +36,16 @@ public class TodoController {
     @ResponseBody
     @RequestMapping("/todos")
     public List<Todo> getTodos(@RequestParam Map<String, String> params) {
-        String category = params.getOrDefault("category", Todo.Category.ALL.name);
-        String sortBy = params.getOrDefault("sortBy", Todo.Property.ID.name);
-        String order = params.getOrDefault("order", SortOrder.ASC.name);
-        int count = Integer.parseInt(params.getOrDefault("count", "10"));
-        int page = Integer.parseInt(params.getOrDefault("page", "1"));
+        String category = params.getOrDefault("category", Category.ALL.name());
+        String sortBy = params.getOrDefault("sortBy", Todo.Property.ID.name());
+        String order = params.getOrDefault("order", SortOrder.ASC.name());
+        int count = NumberUtils.parseInt(params.get("count"), 10);
+        int page = NumberUtils.parseInt(params.get("page"), 1);
         return this.todoService.getTodos(
-                Todo.Category.getByName(category),
+                Category.getByName(category),
                 Todo.Property.getByName(sortBy),
                 SortOrder.getByName(order),
-                (--page) * count, count
+                JInt.decrease(page) * count, count
         );
     }
 
@@ -45,14 +55,15 @@ public class TodoController {
     }
 
     @RequestMapping("/add")
-    public void addTodo(@RequestParam Map<String, String> params) {
+    public List<Todo> addTodo(@RequestParam Map<String, String> params) {
         if (params.containsKey("description")) {
             this.todoService.createTodo(params.get("description"));
         }
+        return getTodos(params);
     }
 
     @RequestMapping("/update")
-    public void updateTodo(@RequestParam Map<String, String> params) {
+    public List<Todo> updateTodo(@RequestParam Map<String, String> params) {
         if (params.containsKey("id")) {
             int id = Integer.parseInt(params.get("id"));
             if (params.containsKey("description")) {
@@ -62,10 +73,11 @@ public class TodoController {
                 this.todoService.updateTodo(id, Boolean.parseBoolean(params.get("done")));
             }
         }
+        return getTodos(params);
     }
 
     @RequestMapping("/delete")
-    public void deleteTodos(@RequestParam Map<String, String> params) {
+    public List<Todo> deleteTodos(@RequestParam Map<String, String> params) {
         if (params.containsKey("ids")) {
             String ids = params.get("ids");
             StringTokenizer st = new StringTokenizer(ids, ",");
@@ -76,12 +88,13 @@ public class TodoController {
             }
             this.todoService.deleteTodos(idList);
         }
+        return getTodos(params);
     }
 
     @ResponseBody
     @RequestMapping("/count/{category}")
     public int count(@PathVariable("category") String category) {
-        return this.todoService.count(Todo.Category.getByName(category));
+        return this.todoService.count(Category.getByName(category));
     }
 
     @ModelAttribute("appName")

@@ -1,7 +1,10 @@
 package ru.maximum13.jrtest.repository;
 
-import org.hibernate.*;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public final class HibernateUtil {
 
@@ -9,13 +12,19 @@ public final class HibernateUtil {
     private static final Session session;
 
     static {
+        StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .configure().build();
         try {
-            Configuration configuration = new Configuration().configure();
-
-            sessionFactory = configuration.buildSessionFactory();
+            //Configuration configuration = new Configuration().configure();
+            /*ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            session = sessionFactory.openSession();*/
+            sessionFactory = new MetadataSources(serviceRegistry).buildMetadata().buildSessionFactory();
             session = sessionFactory.openSession();
-        } catch (HibernateException exc) {
+        } catch (Exception exc) {
             System.err.println("Problem in session factory: " + exc.getMessage());
+            StandardServiceRegistryBuilder.destroy(serviceRegistry);
             throw new ExceptionInInitializerError(exc);
         }
     }

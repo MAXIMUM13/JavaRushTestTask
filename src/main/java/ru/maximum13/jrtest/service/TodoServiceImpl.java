@@ -1,19 +1,26 @@
 package ru.maximum13.jrtest.service;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
-import ru.maximum13.jrtest.model.*;
+
+import ru.maximum13.jrtest.model.Category;
+import ru.maximum13.jrtest.model.Constants;
+import ru.maximum13.jrtest.model.Todo;
+import ru.maximum13.jrtest.model.Todo.Property;
 import ru.maximum13.jrtest.repository.HibernateUtil;
 
 /**
  *
  * @author MAXIMUM13
  */
-@Service("todoService")
+@Service("todo_service")
 public class TodoServiceImpl implements TodoService {
 
     private final Session session;
@@ -26,15 +33,16 @@ public class TodoServiceImpl implements TodoService {
     public int count() {
         Criteria criteria = this.session.createCriteria(Todo.class)
                 .setProjection(Projections.rowCount());
-        return ((Number) criteria.uniqueResult()).intValue();
+        Number result = (Number) criteria.uniqueResult();
+        return result != null ? result.intValue() : 0;
     }
 
     @Override
-    public int count(Todo.Category category) {
+    public int count(Category category) {
         Criteria criteria = this.session.createCriteria(Todo.class);
         switch (category) {
             case ALL:
-                return this.count();
+                return count();
             case DONE:
                 criteria.add(Restrictions.eq("done", true));
                 break;
@@ -71,7 +79,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> getTodos(Todo.Category category, int count) {
+    public List<Todo> getTodos(Category category, int count) {
         Criteria criteria = this.session.createCriteria(Todo.class);
         switch (category) {
             case DONE:
@@ -86,23 +94,23 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> getTodos(Todo.Property sortBy, SortOrder order, int count) {
+    public List<Todo> getTodos(Property sortBy, SortOrder order, int count) {
         return this.getTodos(sortBy, order, 0, count);
     }
 
     @Override
-    public List<Todo> getTodos(Todo.Category category,
-            Todo.Property sortBy, SortOrder order, int count) {
+    public List<Todo> getTodos(Category category,
+            Property sortBy, SortOrder order, int count) {
         return this.getTodos(category, sortBy, order, 0, count);
     }
 
     @Override
-    public List<Todo> getTodos(Todo.Property sortBy, SortOrder order, int startIndex, int count) {
-        return this.getTodos(Todo.Category.ALL, sortBy, order, startIndex, count);
+    public List<Todo> getTodos(Property sortBy, SortOrder order, int startIndex, int count) {
+        return this.getTodos(Category.ALL, sortBy, order, startIndex, count);
     }
 
     @Override
-    public List<Todo> getTodos(Todo.Category category, Todo.Property sortBy,
+    public List<Todo> getTodos(Category category, Property sortBy,
             SortOrder order, int startIndex, int count) {
         Criteria criteria = this.session.createCriteria(Todo.class);
 
@@ -189,10 +197,11 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public void deleteTodos(List<Integer> ids) {
-        String idsSet = ids.toString().replace('[', '(').replace(']', ')');
+        String inRestriction =
+                ids.stream().map(Object::toString).collect(Collectors.joining(", ", "(", ")"));
         this.session.beginTransaction();
         {
-            this.session.createQuery("DELETE FROM Todo WHERE id IN " + idsSet).executeUpdate();
+            this.session.createQuery("DELETE FROM Todo WHERE id IN " + inRestriction).executeUpdate();
         }
         this.session.getTransaction().commit();
     }

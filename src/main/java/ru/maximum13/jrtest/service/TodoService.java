@@ -1,17 +1,18 @@
 package ru.maximum13.jrtest.service;
 
 import java.util.List;
+
+import ru.maximum13.jrtest.model.Category;
 import ru.maximum13.jrtest.model.Todo;
 
 /**
- *
  * @author MAXIMUM13
  */
 public interface TodoService {
 
     public int count();
-    
-    public int count(Todo.Category category);
+
+    public int count(Category category);
 
     public void createTodo(String description);
 
@@ -21,17 +22,17 @@ public interface TodoService {
 
     public List<Todo> getTodos(int count);
 
-    public List<Todo> getTodos(Todo.Category category, int count);
+    public List<Todo> getTodos(Category category, int count);
 
     public List<Todo> getTodos(Todo.Property sortBy, SortOrder order, int count);
 
-    public List<Todo> getTodos(Todo.Category category,
+    public List<Todo> getTodos(Category category,
             Todo.Property sortBy, SortOrder order, int count);
 
     public List<Todo> getTodos(Todo.Property sortBy,
             SortOrder order, int startIndex, int count);
 
-    public List<Todo> getTodos(Todo.Category category, Todo.Property sortBy,
+    public List<Todo> getTodos(Category category, Todo.Property sortBy,
             SortOrder order, int startIndex, int count);
 
     public void updateTodo(int id, String description);
@@ -49,10 +50,10 @@ public interface TodoService {
     public Todo deleteTodo(int id);
 
     public void deleteTodo(Todo todo);
-    
+
     public void deleteTodos(List<Integer> ids);
-    
+
     public String getAppName();
-    
+
     public String getTaskName();
 }

@@ -34,29 +34,6 @@ public class Todo {
             return this.name().toLowerCase();
         }
     }
-    
-    public enum Category {
-
-        ALL("all"),
-        DONE("done"),
-        NOT_DONE("not done");
-
-        public final String name;
-
-        private Category(String name) {
-            this.name = name;
-        }
-
-        public static Category getByName(String name) {
-            Category[] categories = values();
-            for (Category c : categories) {
-                if (c.name.equalsIgnoreCase(name)) {
-                    return c;
-                }
-            }
-            return ALL;
-        }
-    }
 
     private int id;
     private String description;
